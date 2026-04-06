@@ -1,0 +1,13 @@
+name: Manhunt
+version: 1.1
+main: com.example.manhunt.Main
+api-version: 1.20 # Kullandığın sürüme göre 1.21 de olabilir
+commands:
+  manhunt:
+    description: Ana Manhunt komutu
+    permission: manhunt.admin
+    usage: /manhunt <start|setrunner|setkit>
+permissions:
+  manhunt.admin:
+    description: Manhunt yönetici yetkisi
+    default: op
