@@ -6,27 +6,143 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example.manhunt</groupId>
-    <artifactId>ManhuntPlugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <artifactId>Manhunt-Parent</artifactId>
+    <version>1.1</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>core</module>
+        <module>bukkit</module>
+        <module>sponge</module>
+    </modules>
 
     <properties>
-        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>21</java.version>
+        <spigot.version>1.21.1-R0.1-SNAPSHOT</spigot.version>
+        <sponge.version>8.0.0</sponge.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
-    </repositories>
+    <profiles>
+        <profile>
+            <id>v1_21</id>
+            <properties>
+                <version.tag>1.21.x</version.tag>
+                <spigot.version>1.21.1-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>12.0.0-SNAPSHOT</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_20</id>
+            <properties>
+                <version.tag>1.20.x</version.tag>
+                <spigot.version>1.20.1-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>10.0.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_19</id>
+            <properties>
+                <version.tag>1.19.x</version.tag>
+                <spigot.version>1.19.4-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>10.0.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_18</id>
+            <properties>
+                <version.tag>1.18.x</version.tag>
+                <spigot.version>1.18.2-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>9.0.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_17</id>
+            <properties>
+                <version.tag>1.17.x</version.tag>
+                <spigot.version>1.17.1-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>8.0.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_16</id>
+            <properties>
+                <version.tag>1.16.x</version.tag>
+                <spigot.version>1.16.5-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>8.0.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_15</id>
+            <properties>
+                <version.tag>1.15.x</version.tag>
+                <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>8.0.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_14</id>
+            <properties>
+                <version.tag>1.14.x</version.tag>
+                <spigot.version>1.14.4-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>8.0.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_13</id>
+            <properties>
+                <version.tag>1.13.x</version.tag>
+                <spigot.version>1.13.2-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>8.0.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_12</id>
+            <properties>
+                <version.tag>1.12.x</version.tag>
+                <spigot.version>1.12.2-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>7.3.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_11</id>
+            <properties>
+                <version.tag>1.11.x</version.tag>
+                <spigot.version>1.11.2-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>7.3.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_10</id>
+            <properties>
+                <version.tag>1.10.x</version.tag>
+                <spigot.version>1.10.2-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>7.3.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_9</id>
+            <properties>
+                <version.tag>1.9.x</version.tag>
+                <spigot.version>1.9.4-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>7.3.0</sponge.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>v1_8</id>
+            <properties>
+                <version.tag>1.8.x</version.tag>
+                <spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>7.3.0</sponge.version>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.21-R0.1-SNAPSHOT</version>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -43,11 +159,5 @@
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 </project>

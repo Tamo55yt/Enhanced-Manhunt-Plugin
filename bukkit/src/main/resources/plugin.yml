@@ -1,0 +1,11 @@
+main: com.example.manhunt.Main
+name: Manhunt
+version: ${project.version}
+api-version: 1.13
+commands:
+  manhunt:
+    description: Main manhunt command
+    permission: manhunt.admin
+  hc:
+    description: Hunter chat command
+    permission: manhunt.hunter

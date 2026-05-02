@@ -1,0 +1,30 @@
+# Manhunt Plugin Configuration
+
+# Oyun süresi ayarları (saniye cinsinden)
+tracking-delay: 600
+
+# Avcı ayarları
+hunter:
+  # Ölüm başına zırh dayanıklılığı kaybı (0.10 = %10)
+  armor-damage-percentage: 0.10
+  # Yeniden doğma mesafeleri (Runner'a göre blok)
+  respawn-distance:
+    min: 50
+    max: 100
+
+# Başlangıç Koruması (Grace Period)
+grace-period:
+  enabled: true
+  # Kaç saniye sürsün?
+  duration: 60
+  # Koruma süresince hunterlar hareket edebilsin mi? (false = dondurur)
+  allow-movement: false
+
+# Dil Ayarları (tr_tr, en_us, es_es, de_de, fr_fr, ru_ru, ko_kr, ja_jp, pt_br, az_az)
+default-language: "en_us"
+
+# Eşya Temizleme (Yer düşen eşyaların belirli süre sonra silinmesi)
+item-cleanup:
+  enabled: true
+  # Kaç saniye sonra silinsin? (300 = 5 dakika)
+  delay-seconds: 300
