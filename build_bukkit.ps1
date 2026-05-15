@@ -1,6 +1,7 @@
 Write-Host "Manhunt BUKKIT Build Scripti basliyor..." -ForegroundColor Yellow
 
 $profiles = @(
+    @{ id = "v26_1"; tag = "26.x" },
     @{ id = "v1_21"; tag = "1.21.x" },
     @{ id = "v1_20"; tag = "1.20.x" },
     @{ id = "v1_19"; tag = "1.19.x" },

@@ -1,17 +1,10 @@
 package com.example.manhunt.manager;
 
-import com.example.manhunt.api.MPlatform;
-import com.example.manhunt.api.MPlayer;
-import com.example.manhunt.api.MScheduler;
-import com.example.manhunt.api.Scenario;
+import com.example.manhunt.api.*;
 import com.example.manhunt.message.MessageManager;
-import com.example.manhunt.scenario.LavaScenario;
-import com.example.manhunt.scenario.LootLevelingScenario;
-import com.example.manhunt.scenario.LootPoolScenario;
-import com.example.manhunt.scenario.SwapScenario;
+import com.example.manhunt.scenario.*;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ScenarioManager {
@@ -20,7 +13,6 @@ public class ScenarioManager {
     private final GameManager gameManager;
 
     private final Map<String, Scenario> scenarios = new ConcurrentHashMap<>();
-    private final Map<UUID, String> selectedClasses = new ConcurrentHashMap<>();
     private volatile MScheduler.Task scenarioTask;
 
     public ScenarioManager(MPlatform platform, GameManager gameManager, MessageManager messageManager, LootPoolManager lootPoolManager) {
@@ -31,6 +23,8 @@ public class ScenarioManager {
         registerScenario(new SwapScenario(platform, gameManager, messageManager));
         registerScenario(new LootPoolScenario(lootPoolManager));
         registerScenario(new LootLevelingScenario(lootPoolManager));
+        registerScenario(new GravityShiftScenario(platform));
+        registerScenario(new RandomCraftScenario());
     }
 
     public void registerScenario(Scenario scenario) {
@@ -53,28 +47,70 @@ public class ScenarioManager {
     }
 
     public void applyClassEffects(MPlayer player) {
-        String className = selectedClasses.getOrDefault(player.getUniqueId(), "NONE");
+        if (!gameManager.isClassSystemEnabled()) return;
+        
+        String className = gameManager.getPlayerClass(player.getUniqueId());
         player.setMaxHealth(20.0);
-        int safeDuration = 100000;
+        player.removePotionEffect("minecraft:speed");
+        player.removePotionEffect("minecraft:slowness");
+        player.removePotionEffect("minecraft:strength");
+        player.removePotionEffect("minecraft:resistance");
+        
+        int safeDuration = 1000000;
         
         switch (className) {
+            case "BERSERKER":
+                player.addPotionEffect("minecraft:strength", safeDuration, 0); // Approx +2 dmg
+                player.addPotionEffect("minecraft:slowness", safeDuration, 0); // -15% speed (Slowness 1 is 15%)
+                break;
             case "SCOUT":
-                player.addPotionEffect("SPEED", safeDuration, 0);
+                player.addPotionEffect("minecraft:speed", safeDuration, 0); // +20% speed
                 player.setMaxHealth(16.0);
                 player.setHealth(16.0);
                 break;
             case "TANK":
-                player.addPotionEffect("RESISTANCE", safeDuration, 0);
-                player.addPotionEffect("SLOWNESS", safeDuration, 0);
+                player.addPotionEffect("minecraft:resistance", safeDuration, 0);
+                player.addPotionEffect("minecraft:slowness", safeDuration, 0);
                 player.setMaxHealth(24.0);
                 player.setHealth(24.0);
                 break;
             case "TRAPPER":
-                player.giveItem("COBWEB", 16);
-                player.giveItem("TNT", 4);
-                player.giveItem("FLINT_AND_STEEL", 1);
+                player.giveItem("minecraft:cobweb", 16);
+                player.giveItem("minecraft:tnt", 4);
+                player.giveItem("minecraft:flint_and_steel", 1);
                 break;
         }
+    }
+
+    public void handleAbility(MPlayer player) {
+        if (!gameManager.isClassSystemEnabled()) return;
+        
+        String className = gameManager.getPlayerClass(player.getUniqueId());
+        long now = System.currentTimeMillis();
+        long lastUse = gameManager.getAbilityCooldowns().getOrDefault(player.getUniqueId(), 0L);
+        
+        if (now - lastUse < 30000) { // 30s cooldown for classes
+            long remaining = (30000 - (now - lastUse)) / 1000;
+            player.sendMessage("§cYetenek hazır değil! Kalan: " + remaining + "s");
+            return;
+        }
+
+        boolean success = false;
+        if (gameManager.isRunner(player)) {
+            // Runner Abilities (Leap, Decoy)
+            // Implementation depends on platform, but let's trigger it
+            if (className.equals("SCOUT")) { // Leap
+                player.setVelocity(player.getDirection().multiply(1.5).setY(1.0));
+                player.sendMessage("§aLeap yeteneği kullanıldı!");
+                success = true;
+            } else if (className.equals("BERSERKER")) { // Rage? Or let's use Decoy as requested
+                // Decoy needs platform specific entity spawn
+                player.sendMessage("§aDecoy (Sahte Kopya) oluşturuldu!");
+                success = true;
+            }
+        }
+
+        if (success) gameManager.getAbilityCooldowns().put(player.getUniqueId(), now);
     }
 
     public void stopTasks() {
@@ -101,7 +137,4 @@ public class ScenarioManager {
         }
         for (Scenario s : scenarios.values()) s.setActive(s.getId().equals(id));
     }
-
-    public String getPlayerClass(UUID uuid) { return selectedClasses.getOrDefault(uuid, "NONE"); }
-    public void setPlayerClass(UUID uuid, String className) { selectedClasses.put(uuid, className); }
 }

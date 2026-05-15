@@ -21,7 +21,9 @@ public class ScenarioMenu extends BaseMenu {
         inventory.setItem(12, createItem(Material.LAVA_BUCKET, "&cLav Yükseliyor", "&7Her 2 dakikada bir lav seviyesi artar."));
         inventory.setItem(13, createItem(Material.EXPERIENCE_BOTTLE, "&bSeviyeli Eşya", "&7Süreç ilerledikçe eşya kalitesi artar."));
         inventory.setItem(14, createItem(Material.CHEST, "&6Rastgele Eşya", "&7Bloklardan rastgele eşya düşer."));
+        inventory.setItem(15, createItem(Material.CRAFTING_TABLE, "&eRastgele Üretim", "&7Ürettiğiniz eşya rastgele bir eşyaya dönüşür."));
         inventory.setItem(16, createItem(Material.ENDER_PEARL, "&dYer Değiştirme", "&7Her 10 dakikada bir yerler değişir."));
+        inventory.setItem(17, createItem(Material.FEATHER, "&fYerçekimi Değişimi", "&7Her 5 dakikada bir yerçekimi seviyesi değişir."));
         inventory.setItem(22, createGlass(true, "&aGeri Dön"));
     }
 
@@ -42,6 +44,8 @@ public class ScenarioMenu extends BaseMenu {
         else if (item.getType() == Material.EXPERIENCE_BOTTLE) plugin.getScenarioManager().setSelectedScenario("LOOTLEVELING");
         else if (item.getType() == Material.CHEST) plugin.getScenarioManager().setSelectedScenario("LOOTPOOL");
         else if (item.getType() == Material.ENDER_PEARL) plugin.getScenarioManager().setSelectedScenario("SWAP");
+        else if (item.getType() == Material.FEATHER) plugin.getScenarioManager().setSelectedScenario("GRAVITY_SHIFT");
+        else if (item.getType() == Material.CRAFTING_TABLE) plugin.getScenarioManager().setSelectedScenario("RANDOM_CRAFT");
 
         player.sendMessage(ChatColor.GREEN + "Senaryo Seçildi: " + item.getItemMeta().getDisplayName());
         player.closeInventory();

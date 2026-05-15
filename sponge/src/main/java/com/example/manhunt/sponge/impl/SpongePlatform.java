@@ -136,8 +136,8 @@ public class SpongePlatform implements MPlatform {
                 
                 Object effect = builder.getClass().getMethod("build").invoke(builder);
                 
-                // Use raw Key to bypass compiler generic check for ListValue
-                org.spongepowered.api.data.Key key = org.spongepowered.api.data.Keys.FIREWORK_EFFECTS;
+                // Use parameterized Key to fix raw type error while maintaining reflection-based bypass
+                org.spongepowered.api.data.Key<org.spongepowered.api.data.value.ListValue<Object>> key = (org.spongepowered.api.data.Key<org.spongepowered.api.data.value.ListValue<Object>>) (Object) org.spongepowered.api.data.Keys.FIREWORK_EFFECTS;
                 firework.offer(key, java.util.List.of(effect));
                 firework.offer(org.spongepowered.api.data.Keys.FIREWORK_FLIGHT_MODIFIER, Ticks.of(1));
             } catch (Exception ignored) {}
@@ -159,6 +159,12 @@ public class SpongePlatform implements MPlatform {
     @Override
     public boolean getConfigBoolean(String path, boolean def) {
         return def;
+    }
+
+    @Override
+    public void setConfigBoolean(String path, boolean value) {
+        // Sponge-specific config logic would go here if implemented.
+        // Returning for now as a stub to satisfy the interface.
     }
 
     @Override

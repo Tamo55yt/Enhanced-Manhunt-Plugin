@@ -17,8 +17,9 @@ public class ClassMenu extends BaseMenu {
     @Override
     protected void createInventory() {
         super.createInventory();
-        inventory.setItem(10, createItem(Material.FEATHER, "&aİzci (Scout)", "&7Hız I verir, ancak 8 kalbin olur."));
-        inventory.setItem(13, createItem(Material.IRON_CHESTPLATE, "&cTank", "&7Direnç I verir, ancak Yavaşlık I verir.", "&712 kalbin olur."));
+        inventory.setItem(10, createItem(Material.FEATHER, "&aİzci (Scout)", "&7Hız I verir, ancak 8 kalbin olur.", "&7Yetenek: Leap (Büyük Zıplama)"));
+        inventory.setItem(12, createItem(Material.DIAMOND_AXE, "&4Berserker", "&7Kuvvet I verir, ancak %15 yavaşlatır.", "&7Yetenek: Decoy (Sahte Kopya)"));
+        inventory.setItem(14, createItem(Material.IRON_CHESTPLATE, "&cTank", "&7Direnç I verir, ancak Yavaşlık I verir.", "&712 kalbin olur."));
         inventory.setItem(16, createItem(Material.TRIPWIRE_HOOK, "&6Tuzakçı (Trapper)", "&7Örümcek ağı ve TNT ile başlar."));
         inventory.setItem(22, createGlass(true, "&aGeri Dön"));
     }
@@ -35,9 +36,10 @@ public class ClassMenu extends BaseMenu {
             return;
         }
 
-        if (item.getType() == Material.FEATHER) plugin.getScenarioManager().setPlayerClass(player.getUniqueId(), "SCOUT");
-        else if (item.getType() == Material.IRON_CHESTPLATE) plugin.getScenarioManager().setPlayerClass(player.getUniqueId(), "TANK");
-        else if (item.getType() == Material.TRIPWIRE_HOOK) plugin.getScenarioManager().setPlayerClass(player.getUniqueId(), "TRAPPER");
+        if (item.getType() == Material.FEATHER) plugin.getGameManager().setPlayerClass(player.getUniqueId(), "SCOUT");
+        else if (item.getType() == Material.DIAMOND_AXE) plugin.getGameManager().setPlayerClass(player.getUniqueId(), "BERSERKER");
+        else if (item.getType() == Material.IRON_CHESTPLATE) plugin.getGameManager().setPlayerClass(player.getUniqueId(), "TANK");
+        else if (item.getType() == Material.TRIPWIRE_HOOK) plugin.getGameManager().setPlayerClass(player.getUniqueId(), "TRAPPER");
 
         player.sendMessage(ChatColor.GREEN + "Sınıf Seçildi: " + item.getItemMeta().getDisplayName());
         player.closeInventory();

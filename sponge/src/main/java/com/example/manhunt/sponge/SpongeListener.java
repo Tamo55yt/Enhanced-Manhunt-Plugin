@@ -4,8 +4,6 @@ import com.example.manhunt.SpongeMain;
 import com.example.manhunt.sponge.impl.SpongePlayer;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.spongepowered.api.ResourceKey;
@@ -87,17 +85,33 @@ public class SpongeListener {
 
     @Listener(order = Order.POST)
     public void onCompassInteractPrimary(InteractItemEvent.Primary event) {
+        if (checkGhost(event)) return;
         handleCompassPing(event);
     }
 
     @Listener(order = Order.POST)
     public void onCompassInteractSecondary(InteractItemEvent.Secondary event) {
+        if (checkGhost(event)) return;
         handleCompassModeOrTeleport(event);
+        
+        Optional<ServerPlayer> optPlayer = event.cause().first(ServerPlayer.class);
+        if (optPlayer.isPresent() && event.itemStack().type() != ItemTypes.COMPASS.get() && plugin.getGameManager().isClassSystemEnabled()) {
+            plugin.getScenarioManager().handleAbility(new SpongePlayer(optPlayer.get()));
+        }
+    }
+
+    private boolean checkGhost(InteractItemEvent event) {
+        Optional<ServerPlayer> optPlayer = event.cause().first(ServerPlayer.class);
+        if (optPlayer.isPresent() && plugin.getGameManager().isGhost(optPlayer.get().uniqueId())) {
+            if (event instanceof Cancellable) ((Cancellable) event).setCancelled(true);
+            return true;
+        }
+        return false;
     }
 
     private void handleCompassPing(InteractItemEvent event) {
         Optional<ServerPlayer> optPlayer = event.cause().first(ServerPlayer.class);
-        if (optPlayer.isEmpty() || event.itemStack().createStack().type() != ItemTypes.COMPASS.get()) return;
+        if (optPlayer.isEmpty() || event.itemStack().type() != ItemTypes.COMPASS.get()) return;
 
         ServerPlayer player = optPlayer.get();
         if (!plugin.getGameManager().isHunter(new SpongePlayer(player))) return;
@@ -140,7 +154,7 @@ public class SpongeListener {
 
     private void handleCompassModeOrTeleport(InteractItemEvent.Secondary event) {
         Optional<ServerPlayer> optPlayer = event.cause().first(ServerPlayer.class);
-        if (optPlayer.isEmpty() || event.itemStack().createStack().type() != ItemTypes.COMPASS.get()) return;
+        if (optPlayer.isEmpty() || event.itemStack().type() != ItemTypes.COMPASS.get()) return;
 
         ServerPlayer player = optPlayer.get();
         SpongePlayer mPlayer = new SpongePlayer(player);
@@ -161,7 +175,7 @@ public class SpongeListener {
     @Listener
     public void onGunpowderInteract(InteractItemEvent.Secondary event) {
         Optional<ServerPlayer> optPlayer = event.cause().first(ServerPlayer.class);
-        if (optPlayer.isEmpty() || event.itemStack().createStack().type() != ItemTypes.GUNPOWDER.get()) return;
+        if (optPlayer.isEmpty() || event.itemStack().type() != ItemTypes.GUNPOWDER.get()) return;
 
         ServerPlayer player = optPlayer.get();
         if (!plugin.getGameManager().isSmokeBombEnabled() || !plugin.getGameManager().isRunner(new SpongePlayer(player))) return;
@@ -277,8 +291,22 @@ public class SpongeListener {
     }
 
     @Listener
+    public void onBloodMoonDamage(DamageEntityEvent event) {
+        if (!plugin.getGameManager().isBloodMoon() || !plugin.getGameManager().isGameRunning()) return;
+        
+        long time = event.entity().world().properties().gameTime().asTicks().ticks() % 24000;
+        boolean isNight = time > 13000 && time < 23000;
+        
+        if (isNight && event.cause().first(org.spongepowered.api.entity.living.Hostile.class).isPresent()) {
+            event.setBaseDamage(event.baseDamage() * 2.0);
+        }
+    }
+
+    @Listener
     public void onPlayerDeath(DestructEntityEvent.Death event) {
-        if (event.entity() instanceof ServerPlayer player) plugin.getGameManager().handleDeath(player);
+        if (event.entity() instanceof ServerPlayer player) {
+            plugin.getGameManager().handleDeath(new SpongePlayer(player));
+        }
     }
 
     @Listener

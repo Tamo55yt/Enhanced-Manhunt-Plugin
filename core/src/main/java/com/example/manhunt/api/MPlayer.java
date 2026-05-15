@@ -22,7 +22,11 @@ public interface MPlayer {
     void clearInventory();
     void giveItem(@NotNull String material, int amount);
     void addPotionEffect(@NotNull String effectType, int duration, int amplifier);
+    void removePotionEffect(@NotNull String effectType);
     void setGameMode(String mode);
+    void setAllowFlight(boolean allow);
+    void setVelocity(MVector velocity);
+    MVector getDirection();
     
     boolean isOnline();
     boolean equals(Object obj);

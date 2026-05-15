@@ -31,5 +31,6 @@ public interface MPlatform {
     String getConfigString(String path, String def);
     int getConfigInt(String path, int def);
     boolean getConfigBoolean(String path, boolean def);
+    void setConfigBoolean(String path, boolean value);
     double getConfigDouble(String path, double def);
 }

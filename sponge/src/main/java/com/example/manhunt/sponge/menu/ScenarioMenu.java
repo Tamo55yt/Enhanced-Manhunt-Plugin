@@ -18,7 +18,9 @@ public class ScenarioMenu extends BaseMenu {
         inventory.set(10, createItem(ItemTypes.GRASS_BLOCK.get(), "&fNormal Manhunt", "&7Standart oyun modu."));
         inventory.set(12, createItem(ItemTypes.LAVA_BUCKET.get(), "&cLav Yükseliyor", "&7Her 2 dakikada bir lav seviyesi artar."));
         inventory.set(14, createItem(ItemTypes.CHEST.get(), "&6Rastgele Eşya", "&7Bloklardan rastgele eşya düşer."));
+        inventory.set(15, createItem(ItemTypes.CRAFTING_TABLE.get(), "&eRastgele Üretim", "&7Ürettiğiniz eşya rastgele bir eşyaya dönüşür."));
         inventory.set(16, createItem(ItemTypes.ENDER_PEARL.get(), "&dYer Değiştirme", "&7Her 10 dakikada bir yerler değişir."));
+        inventory.set(17, createItem(ItemTypes.FEATHER.get(), "&fYerçekimi Değişimi", "&7Her 5 dakikada bir yerçekimi seviyesi değişir."));
         inventory.set(22, createItem(ItemTypes.GREEN_STAINED_GLASS_PANE.get(), "&aGeri Dön", ""));
     }
 
@@ -33,7 +35,9 @@ public class ScenarioMenu extends BaseMenu {
             case 10: plugin.getScenarioManager().setSelectedScenario("NORMAL"); break;
             case 12: plugin.getScenarioManager().setSelectedScenario("LAVA"); break;
             case 14: plugin.getScenarioManager().setSelectedScenario("RANDOM_DROPS"); break;
+            case 15: plugin.getScenarioManager().setSelectedScenario("RANDOM_CRAFT"); break;
             case 16: plugin.getScenarioManager().setSelectedScenario("SWAP"); break;
+            case 17: plugin.getScenarioManager().setSelectedScenario("GRAVITY_SHIFT"); break;
             default: return;
         }
 

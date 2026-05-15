@@ -25,6 +25,14 @@
 
     <profiles>
         <profile>
+            <id>v26_1</id>
+            <properties>
+                <version.tag>26.x</version.tag>
+                <spigot.version>1.26.1-R0.1-SNAPSHOT</spigot.version>
+                <sponge.version>15.0.0-SNAPSHOT</sponge.version>
+            </properties>
+        </profile>
+        <profile>
             <id>v1_21</id>
             <properties>
                 <version.tag>1.21.x</version.tag>

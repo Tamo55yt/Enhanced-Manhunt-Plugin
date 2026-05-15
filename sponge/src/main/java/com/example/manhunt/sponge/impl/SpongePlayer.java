@@ -132,11 +132,40 @@ public class SpongePlayer implements MPlayer {
     }
 
     @Override
+    public void removePotionEffect(@NotNull String effectType) {
+        String key = effectType.contains(":") ? effectType.toLowerCase() : "minecraft:" + effectType.toLowerCase();
+        org.spongepowered.api.effect.potion.PotionEffectType type = org.spongepowered.api.Sponge.game().registry(org.spongepowered.api.registry.RegistryTypes.POTION_EFFECT_TYPE)
+                .value(ResourceKey.resolve(key));
+        
+        player.transform(org.spongepowered.api.data.Keys.POTION_EFFECTS, list -> {
+            list.removeIf(e -> e.type().equals(type));
+            return list;
+        });
+    }
+
+    @Override
     public void setGameMode(String mode) {
         String key = mode.contains(":") ? mode.toLowerCase() : "minecraft:" + mode.toLowerCase();
         org.spongepowered.api.entity.living.player.gamemode.GameMode gm = org.spongepowered.api.Sponge.game().registry(org.spongepowered.api.registry.RegistryTypes.GAME_MODE)
                 .value(ResourceKey.resolve(key));
         player.offer(org.spongepowered.api.data.Keys.GAME_MODE, gm);
+    }
+
+    @Override
+    public void setAllowFlight(boolean allow) {
+        player.offer(org.spongepowered.api.data.Keys.CAN_FLY, allow);
+        player.offer(org.spongepowered.api.data.Keys.IS_FLYING, allow);
+    }
+
+    @Override
+    public void setVelocity(com.example.manhunt.api.MVector velocity) {
+        player.offer(org.spongepowered.api.data.Keys.VELOCITY, new org.spongepowered.math.vector.Vector3d(velocity.getX(), velocity.getY(), velocity.getZ()));
+    }
+
+    @Override
+    public com.example.manhunt.api.MVector getDirection() {
+        org.spongepowered.math.vector.Vector3d dir = player.direction();
+        return new com.example.manhunt.api.MVector(dir.x(), dir.y(), dir.z());
     }
 
     @Override

@@ -63,7 +63,18 @@ public class ManhuntListener implements Listener {
     public void onCompassInteract(@NotNull PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
-        if (item == null || item.getType() != Material.COMPASS) return;
+
+        if (plugin.getGameManager().isGhost(player.getUniqueId())) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (item == null || item.getType() != Material.COMPASS) {
+            if (event.getAction().name().contains("RIGHT_CLICK") && plugin.getGameManager().isClassSystemEnabled()) {
+                plugin.getScenarioManager().handleAbility(new com.example.manhunt.bukkit.impl.BukkitPlayer(player));
+            }
+            return;
+        }
 
         if (player.getGameMode() == GameMode.SPECTATOR && plugin.getGameManager().isHunter(player)) {
             if (event.getAction().name().contains("RIGHT_CLICK")) {
@@ -200,10 +211,32 @@ public class ManhuntListener implements Listener {
             }
         }
 
-        if (plugin.getScenarioManager().getSelectedScenario().equals("RANDOM_DROPS")) {
+        String scenario = plugin.getScenarioManager().getSelectedScenario();
+        if (scenario.equals("RANDOM_DROPS")) {
             event.setDropItems(false);
             Material randomMat = VALID_DROPS[random.nextInt(VALID_DROPS.length)];
             event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(randomMat));
+        }
+    }
+
+    @EventHandler
+    public void onCraft(org.bukkit.event.inventory.CraftItemEvent event) {
+        if (!plugin.getGameManager().isGameRunning()) return;
+        if (plugin.getScenarioManager().getSelectedScenario().equals("RANDOM_CRAFT")) {
+            Material randomMat = VALID_DROPS[random.nextInt(VALID_DROPS.length)];
+            event.getInventory().setResult(new ItemStack(randomMat));
+        }
+    }
+
+    @EventHandler
+    public void onBloodMoonDamage(org.bukkit.event.entity.EntityDamageByEntityEvent event) {
+        if (!plugin.getGameManager().isBloodMoon() || !plugin.getGameManager().isGameRunning()) return;
+        
+        long time = event.getEntity().getWorld().getTime();
+        boolean isNight = time > 13000 && time < 23000;
+        
+        if (isNight && event.getDamager() instanceof org.bukkit.entity.Monster) {
+            event.setDamage(event.getDamage() * 2.0); // 2x damage for mobs at night
         }
     }
 
@@ -310,7 +343,7 @@ public class ManhuntListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerDeath(@NotNull PlayerDeathEvent event) {
-        plugin.getGameManager().handleDeath(event);
+        plugin.getGameManager().handleDeath(new com.example.manhunt.bukkit.impl.BukkitPlayer(event.getEntity()));
     }
 
     @EventHandler

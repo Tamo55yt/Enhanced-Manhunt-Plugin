@@ -136,6 +136,12 @@ public class BukkitPlatform implements MPlatform {
     }
 
     @Override
+    public void setConfigBoolean(String path, boolean value) {
+        plugin.getConfig().set(path, value);
+        plugin.saveConfig();
+    }
+
+    @Override
     public double getConfigDouble(String path, double def) {
         return plugin.getConfig().getDouble(path, def);
     }

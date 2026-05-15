@@ -166,6 +166,14 @@ public class BukkitPlayer implements MPlayer {
         } catch (Exception ignored) {}
     }
 
+    @Override
+    public void removePotionEffect(@NotNull String effectType) {
+        try {
+            org.bukkit.potion.PotionEffectType type = getPotionType(effectType);
+            if (type != null) player.removePotionEffect(type);
+        } catch (Exception ignored) {}
+    }
+
     @SuppressWarnings("deprecation")
     private org.bukkit.potion.PotionEffectType getPotionType(String name) {
         try {
@@ -181,6 +189,23 @@ public class BukkitPlayer implements MPlayer {
         try {
             player.setGameMode(GameMode.valueOf(mode.toUpperCase()));
         } catch (Exception ignored) {}
+    }
+
+    @Override
+    public void setAllowFlight(boolean allow) {
+        player.setAllowFlight(allow);
+        player.setFlying(allow);
+    }
+
+    @Override
+    public void setVelocity(com.example.manhunt.api.MVector velocity) {
+        player.setVelocity(new org.bukkit.util.Vector(velocity.getX(), velocity.getY(), velocity.getZ()));
+    }
+
+    @Override
+    public com.example.manhunt.api.MVector getDirection() {
+        org.bukkit.util.Vector dir = player.getLocation().getDirection();
+        return new com.example.manhunt.api.MVector(dir.getX(), dir.getY(), dir.getZ());
     }
 
     @Override

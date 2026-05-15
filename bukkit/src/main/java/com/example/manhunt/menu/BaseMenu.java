@@ -36,6 +36,11 @@ public abstract class BaseMenu implements Menu {
         return inventory;
     }
 
+    public void open(org.bukkit.entity.Player player) {
+        if (inventory == null) createInventory();
+        player.openInventory(inventory);
+    }
+
     protected ItemStack createItem(Material mat, String name, String... lore) {
         return createItem(mat, (short) 0, name, lore);
     }

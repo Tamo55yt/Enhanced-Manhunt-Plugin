@@ -30,9 +30,13 @@ public class GameManager {
     private final AtomicLong gameStartTime = new AtomicLong(0);
 
     private final AtomicBoolean isSmokeBombEnabled = new AtomicBoolean(false);
+    private final AtomicBoolean isBloodMoonEnabled = new AtomicBoolean(false);
+    private final AtomicBoolean isClassSystemEnabled = new AtomicBoolean(false);
     private final AtomicInteger borderType = new AtomicInteger(0); // 0: None, 1: Fixed, 2: Dynamic
     private final AtomicInteger borderSize = new AtomicInteger(5000);
     private final Map<UUID, Long> abilityCooldowns = new ConcurrentHashMap<>();
+    private final Map<UUID, String> playerClasses = new ConcurrentHashMap<>(); // "BERSERKER", "SCOUT"
+    private final Set<UUID> activeGhosts = ConcurrentHashMap.newKeySet();
 
     private final Set<UUID> deadHunters = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -48,6 +52,48 @@ public class GameManager {
         this.kitProvider = kitProvider;
         startCleanupTask();
     }
+
+    public void handleDeath(MPlayer player) {
+        if (player == null) return;
+
+        if (isRunner(player)) {
+            runners.remove(player.getUniqueId());
+            if (runners.isEmpty()) endGame(null, true);
+        } else {
+            deadHunters.add(player.getUniqueId());
+            if (platform.getConfigBoolean("ghost-mode", true)) {
+                startGhostMode(player);
+            }
+        }
+    }
+
+    private void startGhostMode(MPlayer player) {
+        activeGhosts.add(player.getUniqueId());
+        player.setGameMode("SPECTATOR");
+        messageManager.sendMessage(player, "ghost_mode_start");
+        
+        platform.getScheduler().runTaskLater(() -> {
+            activeGhosts.remove(player.getUniqueId());
+            player.setGameMode("SURVIVAL");
+            player.teleport(platform.getWorld(player.getLocation().getWorldName()).getSpawnLocation());
+            messageManager.sendMessage(player, "ghost_mode_end");
+        }, 100L); // 5 seconds
+    }
+
+    public boolean isGhost(UUID uuid) { return activeGhosts.contains(uuid); }
+
+    public void setPlayerClass(UUID uuid, String className) {
+        if (!isClassSystemEnabled.get()) return;
+        playerClasses.put(uuid, className);
+    }
+
+    public String getPlayerClass(UUID uuid) { return playerClasses.getOrDefault(uuid, "NONE"); }
+
+    public boolean isBloodMoon() { return isBloodMoonEnabled.get(); }
+    public void setBloodMoon(boolean enabled) { isBloodMoonEnabled.set(enabled); }
+
+    public boolean isClassSystemEnabled() { return isClassSystemEnabled.get(); }
+    public void setClassSystemEnabled(boolean enabled) { isClassSystemEnabled.set(enabled); }
 
     private void startCleanupTask() {
         cancelTask(cleanupTask);
